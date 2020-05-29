@@ -88,8 +88,6 @@ namespace BirthdayControl
                 try
                 {
                     DateTime DataNascimentoConvertida = Convert.ToDateTime(DataNascimento);
-                    TimeSpan Ts = DateTime.Today - DataNascimentoConvertida;
-                    DateTime IdadePessoa = (new DateTime() + Ts).AddYears(-1).AddDays(-1);
                     ValidaDataNascimento = true;
                 }
                 catch (Exception)
@@ -156,35 +154,55 @@ namespace BirthdayControl
             PessoaRepository ObterPessoas = new PessoaRepository();
             IEnumerable<Pessoa> PessoasRepositorio = ObterPessoas.ObterPessoas();
 
-
-            foreach (var Item in PessoasRepositorio)
+            if (PessoasRepositorio.Any())
             {
-                Console.WriteLine(Item.PessoaID + ") " + Item.Nome + " " + Item.Sobrenome);
+                foreach (var Item in PessoasRepositorio)
+                {
+                    Console.WriteLine(Item.PessoaID + ") " + Item.Nome + " " + Item.Sobrenome);
+                }
+
+                Console.WriteLine("---------------------------------------");
+                Console.WriteLine("Informe o ID da pessoa para obter mais detalhes:");
+                Console.WriteLine("---------------------------------------");
+
+                int SelecaoPessoaId = int.Parse(Console.ReadLine());
+
+                List<Pessoa> PessoaEscolhida = PessoasRepositorio.Where(x => x.PessoaID.Equals(SelecaoPessoaId)).ToList();
+
+                if (PessoaEscolhida.Any())
+                {
+                    foreach (Pessoa Item in PessoaEscolhida)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("---------------------------------------");
+                        Console.WriteLine("Nome: " + Item.Nome + " " + Item.Sobrenome);
+                        Console.WriteLine("Data de Nascimento: " + Convert.ToString(Item.DataNascimento));
+                        Console.WriteLine("Idade: " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 1) + " ano(s).");
+                        Console.WriteLine("Falta(m) " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 2) + " dia(s) para o aniversário.");
+                        Console.WriteLine("---------------------------------------");
+                    }
+
+                    Console.WriteLine("Pressione qualquer tecla para continuar...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    MenuPrincipal();
+                }
+                else
+                {
+                    Console.WriteLine("ID inválido. Pressione qualquer tecla para continuar...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    MenuPrincipal();
+                }
             }
-
-            Console.WriteLine("---------------------------------------");
-            Console.WriteLine("Informe o ID da pessoa para obter mais detalhes:");
-            Console.WriteLine("---------------------------------------");
-
-            int SelecaoPessoaId = int.Parse(Console.ReadLine());
-
-            List<Pessoa> PessoaEscolhida = PessoasRepositorio.Where(x => x.PessoaID.Equals(SelecaoPessoaId)).ToList();
-
-            foreach (Pessoa Item in PessoaEscolhida)
+            else
             {
+                Console.WriteLine("Nada para listar. Pressione qualquer tecla para continuar.");
+                Console.ReadKey();
                 Console.Clear();
-                Console.WriteLine("---------------------------------------");
-                Console.WriteLine("Nome: " + Item.Nome + " " + Item.Sobrenome);
-                Console.WriteLine("Data de Nascimento: " + Convert.ToString(Item.DataNascimento));
-                Console.WriteLine("Idade: " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 1) + " ano(s).");
-                Console.WriteLine("Falta(m) " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 2) + " dia(s) para o aniversário.");
-                Console.WriteLine("---------------------------------------");
-            }
+                MenuPrincipal();
 
-            Console.WriteLine("Pressione qualquer tecla para continuar...");
-            Console.ReadKey();
-            Console.Clear();
-            MenuPrincipal();
+            }
         }
 
         // //Método privado da classe Program. Faz a busca de pessoas utilizando expressões lambda.
@@ -193,60 +211,72 @@ namespace BirthdayControl
             PessoaRepository ObterPessoas = new PessoaRepository();
             IEnumerable<Pessoa> PessoasRepositorio = ObterPessoas.ObterPessoas();
 
-            Console.WriteLine("Digite o nome ou parte do nome para encontrar uma pessoa:");
-            string NomeBusca = Console.ReadLine();
-
-            var BuscaNome = PessoasRepositorio.Where(x => x.Nome.Contains(NomeBusca.ToUpper())).ToList();
-            int QtdeBusca = BuscaNome.Count();
-
-
-            if (QtdeBusca > 0)
+            if (PessoasRepositorio.Any())
             {
-                Console.WriteLine("***** Registro(s) encontrado(s): " + QtdeBusca + " *****");
-                Console.WriteLine("---------------------------------------");
+
+                Console.WriteLine("Digite o nome ou parte do nome para encontrar uma pessoa:");
+                string NomeBusca = Console.ReadLine();
+
+                var BuscaNome = PessoasRepositorio.Where(x => x.Nome.Contains(NomeBusca.ToUpper())).ToList();
+                int QtdeBusca = BuscaNome.Count();
 
 
-                foreach (var Item in BuscaNome)
+                if (QtdeBusca > 0)
                 {
-                    Console.WriteLine(Item.PessoaID + ") " + Item.Nome + " " + Item.Sobrenome);
-                }
+                    Console.WriteLine("***** Registro(s) encontrado(s): " + QtdeBusca + " *****");
+                    Console.WriteLine("---------------------------------------");
 
 
-                Console.WriteLine("---------------------------------------");
-                Console.WriteLine("Informe o ID da pessoa para obter mais detalhes:");
-                Console.WriteLine("---------------------------------------");
+                    foreach (var Item in BuscaNome)
+                    {
+                        Console.WriteLine(Item.PessoaID + ") " + Item.Nome + " " + Item.Sobrenome);
+                    }
 
-                int IdEscolhaPessoa = int.Parse(Console.ReadLine());
-                var DetalhesPessoa = PessoasRepositorio.Where(x => x.PessoaID.Equals(IdEscolhaPessoa)).ToList();
 
-                foreach (var Item in DetalhesPessoa)
-                {
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("Informe o ID da pessoa para obter mais detalhes:");
+                    Console.WriteLine("---------------------------------------");
+
+                    int IdEscolhaPessoa = int.Parse(Console.ReadLine());
+                    var DetalhesPessoa = PessoasRepositorio.Where(x => x.PessoaID.Equals(IdEscolhaPessoa)).ToList();
+
+                    foreach (var Item in DetalhesPessoa)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("---------------------------------------");
+                        Console.WriteLine("Nome: " + Item.Nome + " " + Item.Sobrenome);
+                        Console.WriteLine("Data de Nascimento: " + Convert.ToString(Item.DataNascimento));
+                        Console.WriteLine("Idade: " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 1) + " ano(s).");
+                        Console.WriteLine("Falta(m) " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 2) + " dia(s) para o aniversário.");
+                        Console.WriteLine("---------------------------------------");
+                    }
+
+                    Console.WriteLine("Pressione qualquer tecla para continuar...");
+                    Console.ReadKey();
                     Console.Clear();
-                    Console.WriteLine("---------------------------------------");
-                    Console.WriteLine("Nome: " + Item.Nome + " " + Item.Sobrenome);
-                    Console.WriteLine("Data de Nascimento: " + Convert.ToString(Item.DataNascimento));
-                    Console.WriteLine("Idade: " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 1) + " ano(s).");
-                    Console.WriteLine("Falta(m) " + Funcoes.CalculdarIdade(Convert.ToDateTime(Item.DataNascimento), 2) + " dia(s) para o aniversário.");
-                    Console.WriteLine("---------------------------------------");
-                }
+                    MenuPrincipal();
 
-                Console.WriteLine("Pressione qualquer tecla para continuar...");
-                Console.ReadKey();
-                Console.Clear();
-                MenuPrincipal();
+                }
+                else
+                {
+                    Console.WriteLine("Não há registros para o nome informado.");
+                    Console.WriteLine("Pressione qualquer tecla para continuar...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    MenuPrincipal();
+                }
 
             }
             else
             {
-                Console.WriteLine("Não há registros para o nome informado.");
+                Console.WriteLine("Cadastro vazio.");
                 Console.WriteLine("Pressione qualquer tecla para continuar...");
                 Console.ReadKey();
                 Console.Clear();
                 MenuPrincipal();
             }
 
+
         }
-
-
     }
 }
