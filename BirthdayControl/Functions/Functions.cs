@@ -1,13 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
 using BirthdayControl.Business;
 using BirthdayControl.Data;
-using BirthdayControl;
-using System.Security.Cryptography.X509Certificates;
-using System.ComponentModel;
 
 namespace BirthdayControl.Functions
 {
